@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'orders',
     'delivery',
     'rest_framework',
-    
+    'drf_yasg',
     
     'cart',
     'payments',
