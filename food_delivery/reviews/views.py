@@ -1,5 +1,5 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .models import (
@@ -21,7 +21,7 @@ class RestaurantReviewListCreateView(
 
     serializer_class = RestaurantReviewSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
 
@@ -58,7 +58,7 @@ class RestaurantReviewDetailView(
 
     serializer_class = RestaurantReviewSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class MenuItemReviewListCreateView(
@@ -69,7 +69,7 @@ class MenuItemReviewListCreateView(
 
     serializer_class = MenuItemReviewSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
 
@@ -106,4 +106,4 @@ class MenuItemReviewDetailView(
 
     serializer_class = MenuItemReviewSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
