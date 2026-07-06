@@ -107,6 +107,7 @@ urlpatterns = [
         ),
         name='schema-redoc'
     ),
+    path("api/coupons/", include("coupons.urls")),
 ]
 
 urlpatterns += static(

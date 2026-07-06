@@ -1,22 +1,16 @@
 from decimal import Decimal
 
+from django.db import transaction
+
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import (
-    Order,
-    OrderItem,
-)
+from .models import Order, OrderItem
+from .serializers import OrderSerializer
 
-from .serializers import (
-    OrderSerializer,
-)
-
-from cart.models import (
-    Cart,
-    CartItem,
-)
+from cart.models import Cart, CartItem
 
 
 class OrderListCreateView(generics.ListCreateAPIView):
@@ -26,18 +20,26 @@ class OrderListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-
         return Order.objects.filter(
             user=self.request.user
-        )
+        ).order_by("-created_at")
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
 
         delivery_address = request.data.get(
-            'delivery_address'
+            "delivery_address"
         )
 
-        cart = Cart.objects.get(
+        if not delivery_address:
+            return Response(
+                {
+                    "error": "Delivery address is required."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        cart, created = Cart.objects.get_or_create(
             user=request.user
         )
 
@@ -45,7 +47,15 @@ class OrderListCreateView(generics.ListCreateAPIView):
             cart=cart
         )
 
-        total_amount = Decimal('0.00')
+        if not cart_items.exists():
+            return Response(
+                {
+                    "error": "Your cart is empty."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        total_amount = Decimal("0.00")
 
         order = Order.objects.create(
             user=request.user,
@@ -54,10 +64,13 @@ class OrderListCreateView(generics.ListCreateAPIView):
 
         for cart_item in cart_items:
 
-            item_total = (
-                cart_item.menu_item.price *
-                cart_item.quantity
+            price = (
+                cart_item.menu_item.discount_price
+                if cart_item.menu_item.discount_price
+                else cart_item.menu_item.price
             )
+
+            item_total = price * cart_item.quantity
 
             total_amount += item_total
 
@@ -65,11 +78,10 @@ class OrderListCreateView(generics.ListCreateAPIView):
                 order=order,
                 menu_item=cart_item.menu_item,
                 quantity=cart_item.quantity,
-                price=cart_item.menu_item.price
+                price=price,
             )
 
         order.total_amount = total_amount
-
         order.save()
 
         cart_items.delete()
@@ -80,12 +92,68 @@ class OrderListCreateView(generics.ListCreateAPIView):
         )
 
 
-class OrderDetailView(
-    generics.RetrieveUpdateAPIView
-):
-
-    queryset = Order.objects.all()
+class OrderDetailView(generics.RetrieveUpdateAPIView):
 
     serializer_class = OrderSerializer
 
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(
+            user=self.request.user
+        )
+
+
+class CancelOrderView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        try:
+            order = Order.objects.get(
+                id=pk,
+                user=request.user
+            )
+
+        except Order.DoesNotExist:
+
+            return Response(
+                {
+                    "error": "Order not found."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if order.status != "pending":
+
+            return Response(
+                {
+                    "error": "Only pending orders can be cancelled."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        order.status = "cancelled"
+        order.save()
+
+        return Response(
+            {
+                "message": "Order cancelled successfully.",
+                "order": OrderSerializer(order).data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class OrderHistoryView(generics.ListAPIView):
+
+    serializer_class = OrderSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        return Order.objects.filter(
+            user=self.request.user
+        ).order_by("-created_at")

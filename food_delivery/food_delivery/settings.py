@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'reviews',
     'menu',
     'django_filters',
+    'coupons',
 
     ]
 
