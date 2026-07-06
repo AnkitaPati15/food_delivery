@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 
 from accounts.models import User
@@ -21,8 +23,18 @@ class Cart(models.Model):
     )
 
     def __str__(self):
-
         return f"{self.user.username} Cart"
+
+    @property
+    def total_items(self):
+        return sum(item.quantity for item in self.items.all())
+
+    @property
+    def total_price(self):
+        total = Decimal("0.00")
+        for item in self.items.all():
+            total += item.subtotal
+        return total
 
 
 class CartItem(models.Model):
@@ -50,6 +62,18 @@ class CartItem(models.Model):
         auto_now=True
     )
 
-    def __str__(self):
+    class Meta:
+        unique_together = ("cart", "menu_item")
 
-        return self.menu_item.name
+    def __str__(self):
+        return f"{self.menu_item.name} x {self.quantity}"
+
+    @property
+    def unit_price(self):
+        if self.menu_item.discount_price:
+            return self.menu_item.discount_price
+        return self.menu_item.price
+
+    @property
+    def subtotal(self):
+        return self.unit_price * self.quantity

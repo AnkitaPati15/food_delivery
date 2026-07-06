@@ -13,6 +13,8 @@ from .serializers import (
 )
 
 from menu.models import MenuItem
+from rest_framework.views import APIView
+
 
 
 class CartView(generics.RetrieveAPIView):
@@ -33,28 +35,40 @@ class CartView(generics.RetrieveAPIView):
 class AddToCartView(generics.CreateAPIView):
 
     serializer_class = CartItemSerializer
-
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
 
-        menu_item_id = request.data.get('menu_item')
+        menu_item_id = request.data.get("menu_item")
+        quantity = int(request.data.get("quantity", 1))
 
-        quantity = request.data.get('quantity', 1)
+        menu_item = MenuItem.objects.get(id=menu_item_id)
 
-        menu_item = MenuItem.objects.get(
-            id=menu_item_id
-        )
+        if not menu_item.is_available:
+            return Response(
+                {"error": "This item is currently unavailable."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not menu_item.restaurant.is_active:
+            return Response(
+                {"error": "Restaurant is currently unavailable."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         cart, created = Cart.objects.get_or_create(
             user=request.user
         )
 
-        cart_item = CartItem.objects.create(
+        cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
             menu_item=menu_item,
-            quantity=quantity
+            defaults={"quantity": quantity}
         )
+
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
 
         return Response(
             CartItemSerializer(cart_item).data,
@@ -71,3 +85,63 @@ class CartItemDetailView(
     serializer_class = CartItemSerializer
 
     permission_classes = [IsAuthenticated]
+
+
+
+class IncreaseCartItemQuantityView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        try:
+            cart_item = CartItem.objects.get(
+                id=pk,
+                cart__user=request.user
+            )
+        except CartItem.DoesNotExist:
+            return Response(
+                {"error": "Cart item not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        cart_item.quantity += 1
+        cart_item.save()
+
+        return Response(
+            CartItemSerializer(cart_item).data,
+            status=status.HTTP_200_OK
+        )
+
+
+class DecreaseCartItemQuantityView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        try:
+            cart_item = CartItem.objects.get(
+                id=pk,
+                cart__user=request.user
+            )
+        except CartItem.DoesNotExist:
+            return Response(
+                {"error": "Cart item not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
+            return Response(
+                {"message": "Item removed from cart."},
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            CartItemSerializer(cart_item).data,
+            status=status.HTTP_200_OK
+        )    
