@@ -1,19 +1,21 @@
 from django.db import models
 
 from accounts.models import User
+from addresses.models import Address
 from menu.models import MenuItem
 
 
 class Order(models.Model):
 
     STATUS_CHOICES = (
-        ('pending', 'Pending'),
-        ('accepted', 'Accepted'),
-        ('preparing', 'Preparing'),
-        ('out_for_delivery', 'Out For Delivery'),
-        ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled'),
-    )
+    ("pending","Pending"),
+    ("accepted","Accepted"),
+    ("preparing","Preparing"),
+    ("ready","Ready"),
+    ("out_for_delivery","Out For Delivery"),
+    ("delivered","Delivered"),
+    ("cancelled","Cancelled"),
+)
 
     user = models.ForeignKey(
         User,
@@ -33,7 +35,11 @@ class Order(models.Model):
         default=0
     )
 
-    delivery_address = models.TextField()
+
+    delivery_address = models.ForeignKey(
+      Address,
+      on_delete=models.PROTECT
+   )
 
     created_at = models.DateTimeField(
         auto_now_add=True
