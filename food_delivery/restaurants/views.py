@@ -1,5 +1,6 @@
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, filters, status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .models import Restaurant
@@ -8,11 +9,37 @@ from .serializers import RestaurantSerializer
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
 
-    queryset = Restaurant.objects.all()
+    queryset = Restaurant.objects.filter(is_active=True)
 
     serializer_class = RestaurantSerializer
 
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filterset_fields = [
+        "category",
+        "is_active",
+    ]
+
+    search_fields = [
+        "name",
+        "description",
+        "address",
+    ]
+
+    ordering_fields = [
+        "name",
+        "created_at",
+    ]
+
+    ordering = [
+        "name",
+    ]
 
     def create(self, request, *args, **kwargs):
 
@@ -22,18 +49,19 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
 
         restaurant = Restaurant.objects.create(
             owner=request.user,
-            name=serializer.validated_data['name'],
-            description=serializer.validated_data['description'],
-            address=serializer.validated_data['address'],
-            phone_number=serializer.validated_data['phone_number'],
-            image=serializer.validated_data.get('image'),
-            opening_time=serializer.validated_data['opening_time'],
-            closing_time=serializer.validated_data['closing_time'],
+            category=serializer.validated_data["category"],
+            name=serializer.validated_data["name"],
+            description=serializer.validated_data["description"],
+            address=serializer.validated_data["address"],
+            phone_number=serializer.validated_data["phone_number"],
+            image=serializer.validated_data.get("image"),
+            opening_time=serializer.validated_data["opening_time"],
+            closing_time=serializer.validated_data["closing_time"],
         )
 
         return Response(
             RestaurantSerializer(restaurant).data,
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
 
 
