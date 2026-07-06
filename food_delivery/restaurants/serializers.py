@@ -5,10 +5,8 @@ from .models import Restaurant
 
 class RestaurantSerializer(serializers.ModelSerializer):
 
-    # Show category name when retrieving data
     category = serializers.StringRelatedField(read_only=True)
 
-    # Accept category ID when creating/updating
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Restaurant._meta.get_field("category").remote_field.model.objects.all(),
         source="category",
@@ -28,7 +26,13 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'description',
             'address',
             'phone_number',
-            'image',
+            'email',
+            'website',
+            'logo',
+            'cover_image',
+            'delivery_time',
+            'minimum_order',
+            'delivery_fee',
             'opening_time',
             'closing_time',
             'is_active',

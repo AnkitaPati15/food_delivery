@@ -54,10 +54,16 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
             description=serializer.validated_data["description"],
             address=serializer.validated_data["address"],
             phone_number=serializer.validated_data["phone_number"],
-            image=serializer.validated_data.get("image"),
+            email=serializer.validated_data.get("email"),
+            website=serializer.validated_data.get("website"),
+            logo=serializer.validated_data.get("logo"),
+            cover_image=serializer.validated_data.get("cover_image"),
+            delivery_time=serializer.validated_data.get("delivery_time", 30),
+            minimum_order=serializer.validated_data.get("minimum_order", 0),
+            delivery_fee=serializer.validated_data.get("delivery_fee", 0),
             opening_time=serializer.validated_data["opening_time"],
             closing_time=serializer.validated_data["closing_time"],
-        )
+)
 
         return Response(
             RestaurantSerializer(restaurant).data,

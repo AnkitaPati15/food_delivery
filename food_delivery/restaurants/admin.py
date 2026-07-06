@@ -10,13 +10,24 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
+
     list_display = (
         "id",
         "name",
         "category",
         "owner",
-        "phone_number",
+        "delivery_time",
+        "delivery_fee",
+        "minimum_order",
         "is_active",
     )
-    list_filter = ("category", "is_active")
-    search_fields = ("name", "address")
+
+    list_filter = (
+        "category",
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+        "address",
+    )
