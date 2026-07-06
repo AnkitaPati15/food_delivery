@@ -1,3 +1,7 @@
+# Food Delivery API - Python Dependencies
+# Generated from the project's virtual environment
+# Install with: pip install -r requirements.txt
+
 asgiref==3.11.1
 Django==5.2.14
 django-filter==25.2
