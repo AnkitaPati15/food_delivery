@@ -52,9 +52,7 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
 
-        queryset = Restaurant.objects.filter(
-            is_active=True
-        )
+        queryset = Restaurant.objects.active()
 
         category = self.request.query_params.get("category")
 
@@ -106,6 +104,4 @@ class RestaurantDetailView(
                 owner=self.request.user
             )
 
-        return Restaurant.objects.filter(
-            is_active=True
-        )
+        return Restaurant.objects.active()
