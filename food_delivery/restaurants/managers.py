@@ -4,7 +4,10 @@ from django.db import models
 class RestaurantQuerySet(models.QuerySet):
 
     def active(self):
-        return self.filter(is_active=True)
+     return self.filter(
+        is_active=True,
+        is_deleted=False
+    )
 
     def free_delivery(self):
         return self.filter(delivery_fee=0)

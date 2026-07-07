@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 from .managers import RestaurantManager
+from common.models import SoftDeleteModel
 
 
 class Category(models.Model):
@@ -10,7 +11,7 @@ class Category(models.Model):
         return self.name
 
 
-class Restaurant(models.Model):
+class Restaurant(SoftDeleteModel):
 
     owner = models.ForeignKey(
         User,
@@ -87,6 +88,8 @@ class Restaurant(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
     objects = RestaurantManager()
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name

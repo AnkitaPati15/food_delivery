@@ -98,7 +98,7 @@ class RestaurantDetailView(
                 return Restaurant.objects.none()
 
             if self.request.user.is_superuser:
-                return Restaurant.objects.all()
+                return Restaurant.objects.active()
 
             return Restaurant.objects.filter(
                 owner=self.request.user
