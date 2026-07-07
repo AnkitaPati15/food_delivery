@@ -55,8 +55,8 @@ INSTALLED_APPS = [
     'menu',
     'django_filters',
     'coupons',
-
-    ]
+    'addresses',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

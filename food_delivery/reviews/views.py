@@ -1,6 +1,12 @@
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+
+from accounts.permissions import (
+    IsCustomer,
+)
 
 from .models import (
     RestaurantReview,
@@ -17,36 +23,30 @@ class RestaurantReviewListCreateView(
     generics.ListCreateAPIView
 ):
 
-    queryset = RestaurantReview.objects.all()
-
     serializer_class = RestaurantReviewSerializer
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = RestaurantReview.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
-        serializer = self.get_serializer(
-            data=request.data
-        )
+    def get_permissions(self):
 
-        serializer.is_valid(raise_exception=True)
+        if self.request.method == "POST":
+            return [
+                IsAuthenticated(),
+                IsCustomer(),
+            ]
 
-        review = RestaurantReview.objects.create(
-            user=request.user,
-            restaurant=serializer.validated_data[
-                'restaurant'
-            ],
-            rating=serializer.validated_data[
-                'rating'
-            ],
-            comment=serializer.validated_data[
-                'comment'
-            ],
-        )
+        return [
+            IsAuthenticatedOrReadOnly(),
+        ]
 
-        return Response(
-            RestaurantReviewSerializer(review).data,
-            status=status.HTTP_201_CREATED
+    def perform_create(self, serializer):
+
+        serializer.save(
+            user=self.request.user
         )
 
 
@@ -54,47 +54,54 @@ class RestaurantReviewDetailView(
     generics.RetrieveUpdateDestroyAPIView
 ):
 
-    queryset = RestaurantReview.objects.all()
-
     serializer_class = RestaurantReviewSerializer
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
+
+    def get_queryset(self):
+
+        if self.request.user.is_authenticated:
+
+            if self.request.user.is_staff:
+                return RestaurantReview.objects.all()
+
+            return RestaurantReview.objects.filter(
+                user=self.request.user
+            )
+
+        return RestaurantReview.objects.all()
 
 
 class MenuItemReviewListCreateView(
     generics.ListCreateAPIView
 ):
 
-    queryset = MenuItemReview.objects.all()
-
     serializer_class = MenuItemReviewSerializer
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = MenuItemReview.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
-        serializer = self.get_serializer(
-            data=request.data
-        )
+    def get_permissions(self):
 
-        serializer.is_valid(raise_exception=True)
+        if self.request.method == "POST":
+            return [
+                IsAuthenticated(),
+                IsCustomer(),
+            ]
 
-        review = MenuItemReview.objects.create(
-            user=request.user,
-            menu_item=serializer.validated_data[
-                'menu_item'
-            ],
-            rating=serializer.validated_data[
-                'rating'
-            ],
-            comment=serializer.validated_data[
-                'comment'
-            ],
-        )
+        return [
+            IsAuthenticatedOrReadOnly(),
+        ]
 
-        return Response(
-            MenuItemReviewSerializer(review).data,
-            status=status.HTTP_201_CREATED
+    def perform_create(self, serializer):
+
+        serializer.save(
+            user=self.request.user
         )
 
 
@@ -102,8 +109,21 @@ class MenuItemReviewDetailView(
     generics.RetrieveUpdateDestroyAPIView
 ):
 
-    queryset = MenuItemReview.objects.all()
-
     serializer_class = MenuItemReviewSerializer
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
+
+    def get_queryset(self):
+
+        if self.request.user.is_authenticated:
+
+            if self.request.user.is_staff:
+                return MenuItemReview.objects.all()
+
+            return MenuItemReview.objects.filter(
+                user=self.request.user
+            )
+
+        return MenuItemReview.objects.all()

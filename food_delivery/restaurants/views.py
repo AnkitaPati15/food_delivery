@@ -1,7 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, filters, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
+
+from rest_framework import generics, filters
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 
 from .models import Restaurant
 from .serializers import RestaurantSerializer
@@ -9,11 +12,7 @@ from .serializers import RestaurantSerializer
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
 
-    queryset = Restaurant.objects.filter(is_active=True)
-
     serializer_class = RestaurantSerializer
-
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -35,46 +34,78 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
     ordering_fields = [
         "name",
         "created_at",
+        "delivery_time",
+        "minimum_order",
+        "delivery_fee",
     ]
 
     ordering = [
         "name",
     ]
 
-    def create(self, request, *args, **kwargs):
+    def get_permissions(self):
 
-        serializer = self.get_serializer(data=request.data)
+        if self.request.method == "POST":
+            return [IsAuthenticated()]
 
-        serializer.is_valid(raise_exception=True)
+        return [IsAuthenticatedOrReadOnly()]
 
-        restaurant = Restaurant.objects.create(
-            owner=request.user,
-            category=serializer.validated_data["category"],
-            name=serializer.validated_data["name"],
-            description=serializer.validated_data["description"],
-            address=serializer.validated_data["address"],
-            phone_number=serializer.validated_data["phone_number"],
-            email=serializer.validated_data.get("email"),
-            website=serializer.validated_data.get("website"),
-            logo=serializer.validated_data.get("logo"),
-            cover_image=serializer.validated_data.get("cover_image"),
-            delivery_time=serializer.validated_data.get("delivery_time", 30),
-            minimum_order=serializer.validated_data.get("minimum_order", 0),
-            delivery_fee=serializer.validated_data.get("delivery_fee", 0),
-            opening_time=serializer.validated_data["opening_time"],
-            closing_time=serializer.validated_data["closing_time"],
-)
+    def get_queryset(self):
 
-        return Response(
-            RestaurantSerializer(restaurant).data,
-            status=status.HTTP_201_CREATED,
+        queryset = Restaurant.objects.filter(
+            is_active=True
+        )
+
+        category = self.request.query_params.get("category")
+
+        if category:
+            queryset = queryset.filter(
+                category_id=category
+            )
+
+        return queryset
+
+    def perform_create(self, serializer):
+
+        if self.request.user.role != "restaurant_owner":
+
+            raise PermissionError(
+                "Only restaurant owners can create restaurants."
+            )
+
+        serializer.save(
+            owner=self.request.user
         )
 
 
-class RestaurantDetailView(generics.RetrieveUpdateDestroyAPIView):
-
-    queryset = Restaurant.objects.all()
+class RestaurantDetailView(
+    generics.RetrieveUpdateDestroyAPIView
+):
 
     serializer_class = RestaurantSerializer
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
+
+    def get_queryset(self):
+
+        if self.request.method in [
+            "PUT",
+            "PATCH",
+            "DELETE",
+        ]:
+
+            if not self.request.user.is_authenticated:
+                return Restaurant.objects.none()
+
+            if self.request.user.is_superuser:
+                return Restaurant.objects.all()
+
+            return Restaurant.objects.filter(
+                owner=self.request.user
+            )
+
+        return Restaurant.objects.filter(
+            is_active=True
+        )
