@@ -67,8 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'food_delivery.middleware.request_logger.RequestLoggingMiddleware',
 
+    'food_delivery.middleware.request_logger.RequestLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'food_delivery.urls'
@@ -164,11 +164,13 @@ REST_FRAMEWORK = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
         },
     },
+
     "root": {
         "handlers": ["console"],
         "level": "INFO",

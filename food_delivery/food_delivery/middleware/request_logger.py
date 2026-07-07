@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -11,14 +11,21 @@ class RequestLoggingMiddleware:
 
     def __call__(self, request):
 
-        start_time = time.time()
+        start_time = time.perf_counter()
 
         response = self.get_response(request)
 
-        duration = time.time() - start_time
+        duration = time.perf_counter() - start_time
+
+        username = (
+            request.user.username
+            if request.user.is_authenticated
+            else "Anonymous"
+        )
 
         logger.info(
-            "%s %s -> %s (%.3fs)",
+            "[%s] %s %s -> %s (%.3fs)",
+            username,
             request.method,
             request.path,
             response.status_code,
