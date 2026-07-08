@@ -27,4 +27,9 @@ urlpatterns = [
         RestaurantDetailView.as_view(),
         name="restaurant-detail",
     ),
+    path(
+    "restaurants/<int:pk>/",
+    restaurant_detail,
+    name="restaurant-detail-page",
+),
 ]

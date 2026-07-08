@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{{ restaurant.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    {% if restaurant.cover_image %}
+        <img src="{{ restaurant.cover_image.url }}"
+             class="restaurant-banner">
+    {% endif %}
+
+    <div class="row mt-4">
+
+        <div class="col-md-3">
+
+            {% if restaurant.logo %}
+                <img src="{{ restaurant.logo.url }}"
+                     class="restaurant-logo">
+            {% endif %}
+
+        </div>
+
+        <div class="col-md-9">
+
+            <h1>
+
+                {{ restaurant.name }}
+
+            </h1>
+
+            <p>
+
+                {{ restaurant.description }}
+
+            </p>
+
+            <p>
+
+                ⭐ {{ restaurant.average_rating }}
+
+            </p>
+
+            <p>
+
+                📍 {{ restaurant.address }}
+
+            </p>
+
+            <p>
+
+                🚴 {{ restaurant.delivery_time }} mins
+
+            </p>
+
+            <p>
+
+                Minimum Order ₹{{ restaurant.minimum_order }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h2>
+
+        Menu Categories
+
+    </h2>
+
+    <div class="row">
+
+        {% for category in categories %}
+
+        <div class="col-md-3 mb-3">
+
+            <div class="category-card">
+
+                {{ category.name }}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>
+
+            No Categories Available
+
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

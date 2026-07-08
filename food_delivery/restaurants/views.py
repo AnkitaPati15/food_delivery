@@ -10,10 +10,45 @@ from rest_framework.permissions import (
 
 from .models import Restaurant
 from .serializers import RestaurantSerializer
+from django.shortcuts import get_object_or_404
+from menu.models import Category
 
+
+def restaurant_detail(request, pk):
+
+    restaurant = get_object_or_404(
+        Restaurant,
+        pk=pk
+    )
+
+    categories = Category.objects.filter(
+        restaurant=restaurant
+    )
+
+    context = {
+        "restaurant": restaurant,
+        "categories": categories,
+    }
+
+    return render(
+        request,
+        "restaurants/restaurant_detail.html",
+        context,
+    )
 
 def home(request):
-    return render(request, "home.html")
+
+    restaurants = Restaurant.objects.active()[:6]
+
+    context = {
+        "restaurants": restaurants
+    }
+
+    return render(
+        request,
+        "home.html",
+        context
+    )
 
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
