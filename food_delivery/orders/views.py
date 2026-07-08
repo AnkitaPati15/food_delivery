@@ -16,6 +16,13 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from cart.models import Cart, CartItem
 from decimal import Decimal
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.db import transaction
+
+from cart.models import Cart, CartItem
+from addresses.models import Address
+from .models import Order, OrderItem
 
 
 def checkout(request):
@@ -70,7 +77,111 @@ def checkout(request):
         "orders/checkout.html",
         context,
     )
+@transaction.atomic
+def place_order(request):
 
+    if request.method != "POST":
+        return redirect("checkout")
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    cart_items = CartItem.objects.filter(
+        cart=cart
+    )
+
+    if not cart_items.exists():
+
+        messages.error(
+            request,
+            "Your cart is empty."
+        )
+
+        return redirect("cart-page")
+
+    address = Address.objects.filter(
+        user=request.user
+    ).first()
+
+    if not address:
+
+        messages.error(
+            request,
+            "Please add an address first."
+        )
+
+        return redirect("checkout")
+
+    order = Order.objects.create(
+
+        user=request.user,
+
+        delivery_address=address,
+
+        status="pending"
+
+    )
+
+    total = 0
+
+    for item in cart_items:
+
+        price = (
+            item.menu_item.discount_price
+            if item.menu_item.discount_price
+            else item.menu_item.price
+        )
+
+        OrderItem.objects.create(
+
+            order=order,
+
+            menu_item=item.menu_item,
+
+            quantity=item.quantity,
+
+            price=price,
+
+        )
+
+        total += price * item.quantity
+
+    order.total_amount = total
+
+    order.save()
+
+    cart_items.delete()
+
+    messages.success(
+        request,
+        "Order placed successfully."
+    )
+
+    return redirect(
+        "order-history"
+    )
+def order_history(request):
+
+    orders = Order.objects.filter(
+
+        user=request.user
+
+    ).order_by("-created_at")
+
+    return render(
+
+        request,
+
+        "orders/order_history.html",
+
+        {
+
+            "orders": orders
+
+        }
+
+    )
 
 class OrderListCreateView(generics.ListCreateAPIView):
 

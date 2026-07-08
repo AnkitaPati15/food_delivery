@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<h2 class="mb-4">
+
+My Orders
+
+</h2>
+
+{% for order in orders %}
+
+<div class="card mb-4">
+
+<div class="card-body">
+
+<h4>
+
+Order #{{ order.id }}
+
+</h4>
+
+<p>
+
+Status
+
+<strong>
+
+{{ order.get_status_display }}
+
+</strong>
+
+</p>
+
+<p>
+
+Total
+
+₹{{ order.total_amount }}
+
+</p>
+
+<p>
+
+{{ order.created_at }}
+
+</p>
+
+<a
+class="btn btn-outline-primary"
+>
+
+View Details
+
+</a>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="alert alert-info">
+
+No Orders Found.
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

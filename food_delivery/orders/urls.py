@@ -6,6 +6,8 @@ from .views import (
     CancelOrderView,
     OrderHistoryView,
     checkout,
+    place_order,
+    order_history,
 )
 
 urlpatterns = [
@@ -37,5 +39,15 @@ urlpatterns = [
     "checkout/",
     checkout,
     name="checkout",
+),
+path(
+    "place/",
+    place_order,
+    name="place-order",
+),
+path(
+    "history/",
+    order_history,
+    name="order-history",
 ),
 ]

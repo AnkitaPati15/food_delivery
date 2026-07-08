@@ -110,13 +110,22 @@ Total
 
 </h3>
 
-<a
-href="#"
-class="btn btn-success w-100 mt-3">
+<form
+method="POST"
+action="{% url 'place-order' %}"
+>
+
+{% csrf_token %}
+
+<button
+class="btn btn-success w-100 mt-3"
+>
 
 Place Order
 
-</a>
+</button>
+
+</form>
 
 </div>
 
