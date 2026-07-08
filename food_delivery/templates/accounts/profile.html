@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+My Profile
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<div class="row">
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+{% if user.profile_image %}
+
+<img
+
+src="{{ user.profile_image.url }}"
+
+class="profile-image"
+
+>
+
+{% else %}
+
+<img
+
+src="https://placehold.co/200"
+
+class="profile-image"
+
+>
+
+{% endif %}
+
+<h3 class="mt-3">
+
+{{ user.username }}
+
+</h3>
+
+<p>
+
+{{ user.role }}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-9">
+
+<div class="card shadow">
+
+<div class="card-body">
+
+<h2>
+
+My Profile
+
+</h2>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-6">
+
+<strong>
+
+Username
+
+</strong>
+
+<p>
+
+{{ user.username }}
+
+</p>
+
+</div>
+
+<div class="col-md-6">
+
+<strong>
+
+Email
+
+</strong>
+
+<p>
+
+{{ user.email }}
+
+</p>
+
+</div>
+
+<div class="col-md-6">
+
+<strong>
+
+Phone
+
+</strong>
+
+<p>
+
+{{ user.phone_number }}
+
+</p>
+
+</div>
+
+<div class="col-md-6">
+
+<strong>
+
+Role
+
+</strong>
+
+<p>
+
+{{ user.role }}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card mt-4 shadow">
+
+<div class="card-body">
+
+<h3>
+
+Quick Actions
+
+</h3>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<a
+
+href="#"
+
+class="btn btn-outline-danger w-100"
+
+>
+
+Orders
+
+</a>
+
+</div>
+
+<div class="col-md-3">
+
+<a
+
+href="#"
+
+class="btn btn-outline-primary w-100"
+
+>
+
+Addresses
+
+</a>
+
+</div>
+
+<div class="col-md-3">
+
+<a
+
+href="#"
+
+class="btn btn-outline-warning w-100"
+
+>
+
+Password
+
+</a>
+
+</div>
+
+<div class="col-md-3">
+
+<a
+
+href="{% url 'logout' %}"
+
+class="btn btn-outline-dark w-100"
+
+>
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

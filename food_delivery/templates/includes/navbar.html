@@ -66,10 +66,117 @@
 
                 <li class="nav-item">
 
-                    <a href="/accounts/login/"
-                       class="btn btn-light ms-3">
-                        Login
-                    </a>
+                    {% if user.is_authenticated %}
+
+<li class="nav-item dropdown">
+
+<a
+
+class="nav-link dropdown-toggle"
+
+data-bs-toggle="dropdown"
+
+>
+
+{{ user.username }}
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+
+<a
+
+class="dropdown-item"
+
+href="{% url 'profile' %}"
+
+>
+
+Profile
+
+</a>
+
+</li>
+
+<li>
+
+<a
+
+class="dropdown-item"
+
+href="#"
+
+>
+
+Orders
+
+</a>
+
+</li>
+
+<li>
+
+<a
+
+class="dropdown-item"
+
+href="#"
+
+>
+
+Addresses
+
+</a>
+
+</li>
+
+<li>
+
+<hr>
+
+</li>
+
+<li>
+
+<a
+
+class="dropdown-item"
+
+href="{% url 'logout' %}"
+
+>
+
+Logout
+
+</a>
+
+</li>
+
+</ul>
+
+</li>
+
+{% else %}
+
+<li>
+
+<a
+
+href="{% url 'login' %}"
+
+class="btn btn-light"
+
+>
+
+Login
+
+</a>
+
+</li>
+
+{% endif %}
 
                 </li>
 
