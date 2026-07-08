@@ -130,3 +130,32 @@ body{
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 
 }
+.menu-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.menu-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.menu-image{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:cover;
+
+}

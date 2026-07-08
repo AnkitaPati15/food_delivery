@@ -5,6 +5,10 @@ from .views import (
     CartItemDetailView,
     IncreaseCartItemQuantityView,
     DecreaseCartItemQuantityView,
+    
+    cart_page,
+    add_to_cart,
+
 )
 
 
@@ -34,5 +38,16 @@ path(
     "items/<int:pk>/decrease/",
     DecreaseCartItemQuantityView.as_view(),
     name="decrease-cart-item",
+),
+path(
+    "",
+    cart_page,
+    name="cart-page",
+),
+
+path(
+    "add/<int:menu_item_id>/",
+    add_to_cart,
+    name="add-to-cart",
 ),
 ]

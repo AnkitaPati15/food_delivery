@@ -12,6 +12,7 @@ from .models import Restaurant
 from .serializers import RestaurantSerializer
 from django.shortcuts import get_object_or_404
 from menu.models import Category
+from menu.models import Category, MenuItem
 
 
 def restaurant_detail(request, pk):
@@ -25,9 +26,15 @@ def restaurant_detail(request, pk):
         restaurant=restaurant
     )
 
+    menu_items = MenuItem.objects.filter(
+        restaurant=restaurant,
+        is_available=True
+    )
+
     context = {
         "restaurant": restaurant,
         "categories": categories,
+        "menu_items": menu_items,
     }
 
     return render(

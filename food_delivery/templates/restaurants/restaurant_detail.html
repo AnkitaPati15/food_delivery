@@ -103,5 +103,110 @@
     </div>
 
 </div>
+<hr class="my-5">
+
+<h2 class="mb-4">
+
+    Menu
+
+</h2>
+
+{% for category in categories %}
+
+<h3 class="mt-5">
+
+    {{ category.name }}
+
+</h3>
+
+<div class="row">
+
+{% for item in menu_items %}
+
+{% if item.category.id == category.id %}
+
+<div class="col-lg-4 col-md-6 mb-4">
+
+<div class="menu-card">
+
+{% if item.image %}
+
+<img
+src="{{ item.image.url }}"
+class="menu-image">
+
+{% endif %}
+
+<div class="p-3">
+
+<h4>
+
+{{ item.name }}
+
+</h4>
+
+<p>
+
+{{ item.description }}
+
+</p>
+
+{% if item.discount_price %}
+
+<h5>
+
+₹{{ item.discount_price }}
+
+<del class="text-muted">
+
+₹{{ item.price }}
+
+</del>
+
+</h5>
+
+{% else %}
+
+<h5>
+
+₹{{ item.price }}
+
+</h5>
+
+{% endif %}
+
+<p>
+
+{{ item.food_type }}
+
+</p>
+
+<p>
+
+⏱ {{ item.preparation_time }} mins
+
+</p>
+
+<a
+href="{% url 'add-to-cart' item.id %}"
+class="btn btn-danger w-100">
+
+Add To Cart
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+{% endfor %}
+
+</div>
+
+{% endfor %}
 
 {% endblock %}

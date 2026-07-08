@@ -14,6 +14,73 @@ from .serializers import (
 
 from menu.models import MenuItem
 from rest_framework.views import APIView
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+
+from menu.models import MenuItem
+from .models import Cart, CartItem
+
+
+def cart_page(request):
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    items = CartItem.objects.filter(cart=cart)
+
+    total = 0
+
+    for item in items:
+
+        price = (
+            item.menu_item.discount_price
+            if item.menu_item.discount_price
+            else item.menu_item.price
+        )
+
+        total += price * item.quantity
+
+    context = {
+        "cart": cart,
+        "items": items,
+        "total": total,
+    }
+
+    return render(
+        request,
+        "cart/cart.html",
+        context,
+    )
+
+
+def add_to_cart(request, menu_item_id):
+
+    menu_item = get_object_or_404(
+        MenuItem,
+        pk=menu_item_id,
+    )
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        menu_item=menu_item,
+    )
+
+    if not created:
+        cart_item.quantity += 1
+
+    cart_item.save()
+
+    messages.success(
+        request,
+        "Item added to cart."
+    )
+
+    return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 
@@ -145,3 +212,5 @@ class DecreaseCartItemQuantityView(APIView):
             CartItemSerializer(cart_item).data,
             status=status.HTTP_200_OK
         )    
+    
+    
