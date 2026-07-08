@@ -8,7 +8,8 @@ from rest_framework_simplejwt.views import (
 from .views import (
     RegisterView,
     UserProfileView,
-    profile
+    profile,
+    edit_profile
 )
 
 
@@ -29,5 +30,10 @@ urlpatterns = [
 
     name="profile",
 
+),
+path(
+    "edit-profile/",
+    edit_profile,
+    name="edit-profile",
 ),
 ]

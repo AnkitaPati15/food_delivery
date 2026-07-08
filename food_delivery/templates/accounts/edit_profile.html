@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-8">
+
+<div class="card shadow">
+
+<div class="card-body">
+
+<h2 class="mb-4">
+
+Edit Profile
+
+</h2>
+
+<form
+method="POST"
+enctype="multipart/form-data"
+>
+
+{% csrf_token %}
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Username
+
+</label>
+
+{{ form.username }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Email
+
+</label>
+
+{{ form.email }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+First Name
+
+</label>
+
+{{ form.first_name }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Last Name
+
+</label>
+
+{{ form.last_name }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Phone
+
+</label>
+
+{{ form.phone_number }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Profile Image
+
+</label>
+
+{{ form.profile_image }}
+
+</div>
+
+</div>
+
+<button
+class="btn btn-danger"
+>
+
+Save Changes
+
+</button>
+
+<a
+href="{% url 'profile' %}"
+class="btn btn-secondary"
+>
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

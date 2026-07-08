@@ -9,7 +9,45 @@ from .serializers import (
 )
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect
 
+from .forms import ProfileUpdateForm
+@login_required
+def edit_profile(request):
+
+    if request.method == "POST":
+
+        form = ProfileUpdateForm(
+            request.POST,
+            request.FILES,
+            instance=request.user,
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Profile updated successfully."
+            )
+
+            return redirect("profile")
+
+    else:
+
+        form = ProfileUpdateForm(
+            instance=request.user
+        )
+
+    return render(
+        request,
+        "accounts/edit_profile.html",
+        {
+            "form": form,
+        },
+    )
 
 @login_required
 def profile(request):
