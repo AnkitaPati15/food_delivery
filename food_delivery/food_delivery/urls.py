@@ -55,10 +55,7 @@ urlpatterns = [
         include('accounts.urls')
     ),
 
-    path(
-        'api/restaurants/',
-        include('restaurants.urls')
-    ),
+    
 
     path(
         'api/menu/',
@@ -108,6 +105,7 @@ urlpatterns = [
         name='schema-redoc'
     ),
     path("api/coupons/", include("coupons.urls")),
+    path("", include("restaurants.urls")),
 ]
 
 urlpatterns += static(

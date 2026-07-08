@@ -1,6 +1,8 @@
+from django.shortcuts import render
+
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import generics, filters
+from rest_framework import filters, generics
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
@@ -8,6 +10,10 @@ from rest_framework.permissions import (
 
 from .models import Restaurant
 from .serializers import RestaurantSerializer
+
+
+def home(request):
+    return render(request, "home.html")
 
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
@@ -21,7 +27,6 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
     ]
 
     filterset_fields = [
-        "category",
         "is_active",
     ]
 
@@ -37,6 +42,7 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
         "delivery_time",
         "minimum_order",
         "delivery_fee",
+        "average_rating",
     ]
 
     ordering = [
@@ -52,28 +58,16 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
 
-        queryset = Restaurant.objects.active()
-
-        category = self.request.query_params.get("category")
-
-        if category:
-            queryset = queryset.filter(
-                category_id=category
-            )
-
-        return queryset
+        return Restaurant.objects.active()
 
     def perform_create(self, serializer):
 
         if self.request.user.role != "restaurant_owner":
-
             raise PermissionError(
                 "Only restaurant owners can create restaurants."
             )
 
-        serializer.save(
-            owner=self.request.user
-        )
+        serializer.save(owner=self.request.user)
 
 
 class RestaurantDetailView(

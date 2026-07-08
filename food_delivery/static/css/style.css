@@ -1,0 +1,30 @@
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f8f9fa;
+}
+
+.hero{
+    padding:120px 0;
+    background:linear-gradient(135deg,#ff512f,#dd2476);
+    color:white;
+}
+
+.hero h1{
+    font-weight:700;
+}
+
+.card{
+    border:none;
+    border-radius:15px;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+
+footer a{
+    text-decoration:none;
+}

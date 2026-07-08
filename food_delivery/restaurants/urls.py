@@ -1,20 +1,30 @@
 from django.urls import path
 
 from .views import (
+    home,
     RestaurantListCreateView,
     RestaurantDetailView,
 )
 
-
 urlpatterns = [
 
+    # Homepage
     path(
-        '',
-        RestaurantListCreateView.as_view()
+        "",
+        home,
+        name="home",
+    ),
+
+    # Restaurant APIs
+    path(
+        "api/",
+        RestaurantListCreateView.as_view(),
+        name="restaurant-list",
     ),
 
     path(
-        '<int:pk>/',
-        RestaurantDetailView.as_view()
+        "api/<int:pk>/",
+        RestaurantDetailView.as_view(),
+        name="restaurant-detail",
     ),
 ]

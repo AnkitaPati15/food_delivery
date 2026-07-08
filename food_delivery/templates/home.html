@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+Foodie
+
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="container text-center">
+
+        <h1 class="display-4 fw-bold">
+
+            Delicious Food
+
+            <span class="text-danger">
+
+                Delivered Fast
+
+            </span>
+
+        </h1>
+
+        <p class="lead">
+
+            Discover restaurants and order your favourite meals.
+
+        </p>
+
+        <a href="/restaurants/"
+           class="btn btn-danger btn-lg">
+
+            Explore Restaurants
+
+        </a>
+
+    </div>
+
+</section>
+
+<section class="container my-5">
+
+    <h2 class="text-center mb-4">
+
+        Popular Categories
+
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                🍕
+                <h5>Pizza</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                🍔
+                <h5>Burger</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                🍜
+                <h5>Noodles</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                🥗
+                <h5>Healthy</h5>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
