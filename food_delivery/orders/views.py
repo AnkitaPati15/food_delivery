@@ -12,6 +12,64 @@ from cart.models import Cart, CartItem
 
 from .models import Order, OrderItem
 from .serializers import OrderSerializer
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from cart.models import Cart, CartItem
+from decimal import Decimal
+
+
+def checkout(request):
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    items = CartItem.objects.filter(
+        cart=cart
+    )
+
+    if not items.exists():
+
+        messages.warning(
+            request,
+            "Your cart is empty."
+        )
+
+        return redirect("cart-page")
+
+    subtotal = Decimal("0.00")
+
+    for item in items:
+
+        price = (
+            item.menu_item.discount_price
+            if item.menu_item.discount_price
+            else item.menu_item.price
+        )
+
+        subtotal += price * item.quantity
+
+    delivery_fee = Decimal("50")
+
+    total = subtotal + delivery_fee
+
+    context = {
+
+        "items": items,
+
+        "subtotal": subtotal,
+
+        "delivery_fee": delivery_fee,
+
+        "total": total,
+
+    }
+
+    return render(
+        request,
+        "orders/checkout.html",
+        context,
+    )
 
 
 class OrderListCreateView(generics.ListCreateAPIView):

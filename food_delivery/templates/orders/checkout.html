@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<h2 class="mb-4">
+
+Checkout
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Food</th>
+
+<th>Qty</th>
+
+<th>Price</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in items %}
+
+<tr>
+
+<td>
+
+{{ item.menu_item.name }}
+
+</td>
+
+<td>
+
+{{ item.quantity }}
+
+</td>
+
+<td>
+
+₹{{ item.menu_item.price }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<div class="card p-4 mt-4">
+
+<h4>
+
+Order Summary
+
+</h4>
+
+<hr>
+
+<p>
+
+Subtotal
+
+<span class="float-end">
+
+₹{{ subtotal }}
+
+</span>
+
+</p>
+
+<p>
+
+Delivery
+
+<span class="float-end">
+
+₹{{ delivery_fee }}
+
+</span>
+
+</p>
+
+<hr>
+
+<h3>
+
+Total
+
+<span class="float-end">
+
+₹{{ total }}
+
+</span>
+
+</h3>
+
+<a
+href="#"
+class="btn btn-success w-100 mt-3">
+
+Place Order
+
+</a>
+
+</div>
+
+</div>
+
+{% endblock %}

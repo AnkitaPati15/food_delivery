@@ -5,6 +5,7 @@ from .views import (
     OrderDetailView,
     CancelOrderView,
     OrderHistoryView,
+    checkout,
 )
 
 urlpatterns = [
@@ -32,4 +33,9 @@ urlpatterns = [
         CancelOrderView.as_view(),
         name="cancel-order",
     ),
+    path(
+    "checkout/",
+    checkout,
+    name="checkout",
+),
 ]
