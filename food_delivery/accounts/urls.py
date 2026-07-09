@@ -8,8 +8,10 @@ from rest_framework_simplejwt.views import (
 from .views import (
     RegisterView,
     UserProfileView,
+    change_password,
     profile,
-    edit_profile
+    edit_profile,
+    change_password,
 )
 
 
@@ -35,5 +37,10 @@ path(
     "edit-profile/",
     edit_profile,
     name="edit-profile",
+),
+path(
+    "change-password/",
+    change_password,
+    name="change-password",
 ),
 ]

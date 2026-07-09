@@ -13,6 +13,47 @@ from django.contrib import messages
 from django.shortcuts import redirect
 
 from .forms import ProfileUpdateForm
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomPasswordChangeForm
+@login_required
+def change_password(request):
+
+    if request.method == "POST":
+
+        form = CustomPasswordChangeForm(
+            request.user,
+            request.POST
+        )
+
+        if form.is_valid():
+
+            user = form.save()
+
+            update_session_auth_hash(
+                request,
+                user
+            )
+
+            messages.success(
+                request,
+                "Password changed successfully."
+            )
+
+            return redirect("profile")
+
+    else:
+
+        form = CustomPasswordChangeForm(
+            request.user
+        )
+
+    return render(
+        request,
+        "accounts/change_password.html",
+        {
+            "form": form
+        }
+    )
 @login_required
 def edit_profile(request):
 
