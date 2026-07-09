@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-8">
+
+<div class="card shadow">
+
+<div class="card-body">
+
+<h2 class="mb-4">
+
+{{ title }}
+
+</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<div class="mb-3">
+
+<label>
+
+Title
+
+</label>
+
+{{ form.title }}
+
+</div>
+
+<div class="mb-3">
+
+<label>
+
+Full Address
+
+</label>
+
+{{ form.full_address }}
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+City
+
+</label>
+
+{{ form.city }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+State
+
+</label>
+
+{{ form.state }}
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Pincode
+
+</label>
+
+{{ form.pincode }}
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Landmark
+
+</label>
+
+{{ form.landmark }}
+
+</div>
+
+</div>
+
+<div class="form-check mb-3">
+
+{{ form.is_default }}
+
+<label class="form-check-label">
+
+Set as Default Address
+
+</label>
+
+</div>
+
+<button
+class="btn btn-danger">
+
+Save Address
+
+</button>
+
+<a
+href="{% url 'address-list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -106,6 +106,10 @@ urlpatterns = [
     ),
     path("api/coupons/", include("coupons.urls")),
     path("", include("restaurants.urls")),
+    path(
+    "addresses/",
+    include("addresses.urls"),
+),
 ]
 
 urlpatterns += static(
