@@ -1,0 +1,107 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>My Restaurants</h2>
+
+    <a href="{% url 'restaurant-create' %}"
+       class="btn btn-primary">
+
+        + Add Restaurant
+
+    </a>
+
+</div>
+
+{% if restaurants %}
+
+<table class="table table-bordered table-hover">
+
+    <thead>
+
+        <tr>
+
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Delivery Fee</th>
+            <th>Status</th>
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for restaurant in restaurants %}
+
+        <tr>
+
+            <td>{{ restaurant.name }}</td>
+
+            <td>{{ restaurant.phone_number }}</td>
+
+            <td>₹{{ restaurant.delivery_fee }}</td>
+
+            <td>
+
+                {% if restaurant.is_active %}
+
+                    <span class="badge bg-success">
+
+                        Active
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Inactive
+
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <a
+                  href="{% url 'restaurant-edit' restaurant.id %}"
+                  class="btn btn-warning btn-sm">
+
+                   Edit
+
+             </a>
+
+                <a href="#"
+                   class="btn btn-danger btn-sm">
+
+                    Delete
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% else %}
+
+<div class="alert alert-info">
+
+    No restaurants found.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

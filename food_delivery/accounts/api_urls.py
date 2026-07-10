@@ -4,19 +4,16 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import (
+from .api_views import (
     RegisterView,
     UserProfileView,
+)
+from .views import (
     profile,
     edit_profile,
     change_password,
     UserLoginView,
     UserLogoutView,
-)
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
 )
 
 urlpatterns = [

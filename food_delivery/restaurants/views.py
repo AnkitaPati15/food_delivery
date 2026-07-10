@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404,
+)
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -18,6 +22,10 @@ from django.shortcuts import render
 
 from menu.models import MenuItem
 from orders.models import Order
+from django.contrib.auth.decorators import login_required
+from .forms import RestaurantForm
+from django.contrib import messages
+
 
 
 @login_required
@@ -56,6 +64,142 @@ def owner_dashboard(request):
         request,
         "owner/dashboard.html",
         context,
+    )
+
+@login_required
+def owner_restaurant_list(request):
+
+    if request.user.role != "restaurant_owner":
+        return redirect("/")
+
+    restaurants = Restaurant.objects.filter(
+        owner=request.user,
+        is_deleted=False,
+    )
+
+    context = {
+        "restaurants": restaurants,
+    }
+
+    return render(
+        request,
+        "owner/restaurant_list.html",
+        context,
+    )
+@login_required
+def owner_restaurant_create(request):
+
+    if request.user.role != "restaurant_owner":
+        return redirect("/")
+
+    if request.method == "POST":
+
+        form = RestaurantForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+
+            restaurant = form.save(commit=False)
+
+            restaurant.owner = request.user
+
+            restaurant.save()
+
+            messages.success(
+                request,
+                "Restaurant created successfully."
+            )
+
+            return redirect(
+                "owner-restaurant-list"
+            )
+
+    else:
+
+        form = RestaurantForm()
+
+    return render(
+        request,
+        "owner/restaurant_form.html",
+        {
+            "form": form,
+            "title": "Add Restaurant",
+        },
+    )
+@login_required
+def owner_restaurant_edit(request, pk):
+
+    restaurant = get_object_or_404(
+        Restaurant,
+        pk=pk,
+        owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = RestaurantForm(
+            request.POST,
+            request.FILES,
+            instance=restaurant,
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Restaurant updated successfully."
+            )
+
+            return redirect(
+                "owner-restaurant-list"
+            )
+
+    else:
+
+        form = RestaurantForm(
+            instance=restaurant
+        )
+
+    return render(
+        request,
+        "owner/restaurant_form.html",
+        {
+            "form": form,
+            "title": "Edit Restaurant",
+        },
+    )
+@login_required
+def owner_restaurant_delete(request, pk):
+
+    restaurant = get_object_or_404(
+        Restaurant,
+        pk=pk,
+        owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        restaurant.delete()
+
+        messages.success(
+            request,
+            "Restaurant deleted successfully."
+        )
+
+        return redirect(
+            "owner-restaurant-list"
+        )
+
+    return render(
+        request,
+        "owner/restaurant_delete.html",
+        {
+            "restaurant": restaurant,
+        },
     )
 
 
