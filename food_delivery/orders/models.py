@@ -77,6 +77,9 @@ class OrderItem(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+    @property
+    def total_price(self):
+     return self.price * self.quantity
 
     def __str__(self):
 

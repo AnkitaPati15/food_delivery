@@ -23,6 +23,15 @@ from django.db import transaction
 from cart.models import Cart, CartItem
 from addresses.models import Address
 from .models import Order, OrderItem
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404,
+)
+
+from .forms import OrderStatusForm
 
 
 def checkout(request):
@@ -356,3 +365,91 @@ class OrderHistoryView(generics.ListAPIView):
         return Order.objects.filter(
             user=self.request.user
         ).order_by("-created_at")
+    
+@login_required
+def owner_order_list(request):
+
+    if request.user.role != "restaurant_owner":
+
+        return redirect("/")
+
+    orders = Order.objects.filter(
+        items__menu_item__restaurant__owner=request.user
+    ).distinct().order_by("-created_at")
+
+    status = request.GET.get("status")
+
+    if status:
+
+        orders = orders.filter(status=status)
+
+    return render(
+        request,
+        "owner/order_list.html",
+        {
+            "orders": orders,
+            "selected_status": status,
+            "status_choices": Order.STATUS_CHOICES,
+        },
+    )
+@login_required
+def owner_order_detail(request, pk):
+
+    order = get_object_or_404(
+        Order,
+        pk=pk,
+        items__menu_item__restaurant__owner=request.user,
+    )
+
+    return render(
+        request,
+        "owner/order_detail.html",
+        {
+            "order": order,
+        },
+    )
+@login_required
+def owner_order_status(request, pk):
+
+    order = get_object_or_404(
+        Order,
+        pk=pk,
+        items__menu_item__restaurant__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = OrderStatusForm(
+            request.POST,
+            instance=order,
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Order status updated."
+            )
+
+            return redirect(
+                "owner-order-detail",
+                pk=order.id,
+            )
+
+    else:
+
+        form = OrderStatusForm(
+            instance=order,
+        )
+
+    return render(
+        request,
+        "owner/order_status.html",
+        {
+            "form": form,
+            "order": order,
+        },
+    )    
+
