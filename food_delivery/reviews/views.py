@@ -17,6 +17,51 @@ from .serializers import (
     RestaurantReviewSerializer,
     MenuItemReviewSerializer,
 )
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def owner_restaurant_reviews(request):
+
+    if request.user.role != "restaurant_owner":
+
+        return redirect("/")
+
+    reviews = RestaurantReview.objects.filter(
+        restaurant__owner=request.user
+    ).select_related(
+        "restaurant",
+        "user",
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "owner/restaurant_review_list.html",
+        {
+            "reviews": reviews,
+        },
+    )
+@login_required
+def owner_menu_reviews(request):
+
+    if request.user.role != "restaurant_owner":
+
+        return redirect("/")
+
+    reviews = MenuItemReview.objects.filter(
+        menu_item__restaurant__owner=request.user
+    ).select_related(
+        "menu_item",
+        "user",
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "owner/menu_review_list.html",
+        {
+            "reviews": reviews,
+        },
+    )
 
 
 class RestaurantReviewListCreateView(

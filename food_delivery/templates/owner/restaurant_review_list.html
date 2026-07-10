@@ -1,0 +1,87 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<h2 class="mb-4">
+
+Restaurant Reviews
+
+</h2>
+
+<table class="table table-hover">
+
+<thead>
+
+<tr>
+
+<th>Restaurant</th>
+
+<th>Customer</th>
+
+<th>Rating</th>
+
+<th>Comment</th>
+
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for review in reviews %}
+
+<tr>
+
+<td>
+
+{{ review.restaurant.name }}
+
+</td>
+
+<td>
+
+{{ review.user.username }}
+
+</td>
+
+<td>
+
+⭐ {{ review.rating }}/5
+
+</td>
+
+<td>
+
+{{ review.comment }}
+
+</td>
+
+<td>
+
+{{ review.created_at|date:"d M Y" }}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="5">
+
+No Reviews Found
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

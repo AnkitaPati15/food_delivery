@@ -5,6 +5,10 @@ from .views import (
     RestaurantReviewDetailView,
     MenuItemReviewListCreateView,
     MenuItemReviewDetailView,
+   owner_restaurant_reviews,
+   owner_menu_reviews,
+ 
+
 )
 
 
@@ -29,4 +33,15 @@ urlpatterns = [
         'menu-items/<int:pk>/',
         MenuItemReviewDetailView.as_view()
     ),
+    path(
+    "owner/reviews/restaurants/",
+    owner_restaurant_reviews,
+    name="owner-restaurant-reviews",
+),
+
+path(
+    "owner/reviews/menu/",
+    owner_menu_reviews,
+    name="owner-menu-reviews",
+),
 ]
