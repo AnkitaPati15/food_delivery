@@ -32,6 +32,226 @@ from restaurants.models import Restaurant
 
 from .forms import CategoryForm
 from .models import Category
+from .models import (
+    Category,
+    MenuItem,
+)
+
+from .forms import (
+    CategoryForm,
+    MenuItemForm,
+)
+@login_required
+def owner_menu_list(request):
+
+    menu_items = MenuItem.objects.filter(
+        restaurant__owner=request.user
+    )
+
+    return render(
+        request,
+        "owner/menu_list.html",
+        {
+            "menu_items": menu_items,
+        },
+    )
+@login_required
+def owner_menu_create(request):
+
+    if request.user.role != "restaurant_owner":
+        return redirect("/")
+
+    if request.method == "POST":
+
+        form = MenuItemForm(
+            request.POST,
+            request.FILES,
+        )
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Menu item added successfully."
+            )
+
+            return redirect(
+                "owner-menu-list"
+            )
+
+    else:
+
+        form = MenuItemForm()
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+    return render(
+        request,
+        "owner/menu_form.html",
+        {
+            "form": form,
+            "title": "Add Menu Item",
+        },
+    )
+@login_required
+def owner_menu_create(request):
+
+    if request.user.role != "restaurant_owner":
+        return redirect("/")
+
+    if request.method == "POST":
+
+        form = MenuItemForm(
+            request.POST,
+            request.FILES,
+        )
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Menu item added successfully."
+            )
+
+            return redirect(
+                "owner-menu-list"
+            )
+
+    else:
+
+        form = MenuItemForm()
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+    return render(
+        request,
+        "owner/menu_form.html",
+        {
+            "form": form,
+            "title": "Add Menu Item",
+        },
+    )
+@login_required
+def owner_menu_edit(request, pk):
+
+    menu_item = get_object_or_404(
+        MenuItem,
+        pk=pk,
+        restaurant__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = MenuItemForm(
+            request.POST,
+            request.FILES,
+            instance=menu_item,
+        )
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Menu item updated successfully."
+            )
+
+            return redirect(
+                "owner-menu-list"
+            )
+
+    else:
+
+        form = MenuItemForm(
+            instance=menu_item
+        )
+
+        form.fields["restaurant"].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        form.fields["category"].queryset = Category.objects.filter(
+            restaurant__owner=request.user
+        )
+
+    return render(
+        request,
+        "owner/menu_form.html",
+        {
+            "form": form,
+            "title": "Edit Menu Item",
+        },
+    )
+@login_required
+def owner_menu_delete(request, pk):
+
+    menu_item = get_object_or_404(
+        MenuItem,
+        pk=pk,
+        restaurant__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        menu_item.delete()
+
+        messages.success(
+            request,
+            "Menu item deleted successfully."
+        )
+
+        return redirect(
+            "owner-menu-list"
+        )
+
+    return render(
+        request,
+        "owner/menu_delete.html",
+        {
+            "menu_item": menu_item,
+        },
+    )
 
 
 @login_required

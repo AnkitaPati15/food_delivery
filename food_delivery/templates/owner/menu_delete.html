@@ -1,0 +1,54 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h2>
+
+Delete Menu Item
+
+</h2>
+
+<p class="mt-4">
+
+Are you sure you want to delete
+
+<strong>
+
+{{ menu_item.name }}
+
+</strong>
+
+?
+
+</p>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<button
+class="btn btn-danger">
+
+Delete
+
+</button>
+
+<a
+href="{% url 'owner-menu-list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}
