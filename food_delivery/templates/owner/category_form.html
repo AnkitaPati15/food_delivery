@@ -1,0 +1,46 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<div class="card shadow">
+
+<div class="card-header">
+
+<h3>
+
+{{ title }}
+
+</h3>
+
+</div>
+
+<div class="card-body">
+
+<form method="POST">
+
+{% csrf_token %}
+
+{{ form.as_p }}
+
+<button
+class="btn btn-success">
+
+Save
+
+</button>
+
+<a
+href="{% url 'owner-category-list' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

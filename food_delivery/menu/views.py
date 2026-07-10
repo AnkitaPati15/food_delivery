@@ -20,6 +20,166 @@ from .serializers import (
     CategorySerializer,
     MenuItemSerializer,
 )
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404,
+)
+
+from restaurants.models import Restaurant
+
+from .forms import CategoryForm
+from .models import Category
+
+
+@login_required
+def owner_category_list(request):
+
+    categories = Category.objects.filter(
+        restaurant__owner=request.user
+    )
+
+    return render(
+        request,
+        "owner/category_list.html",
+        {
+            "categories": categories,
+        },
+    )
+@login_required
+def owner_category_create(request):
+
+    if request.user.role != "restaurant_owner":
+
+        return redirect("/")
+
+    if request.method == "POST":
+
+        form = CategoryForm(request.POST)
+
+        form.fields[
+            "restaurant"
+        ].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Category created successfully."
+            )
+
+            return redirect(
+                "owner-category-list"
+            )
+
+    else:
+
+        form = CategoryForm()
+
+        form.fields[
+            "restaurant"
+        ].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+    return render(
+        request,
+        "owner/category_form.html",
+        {
+            "form": form,
+            "title": "Add Category",
+        },
+    )
+@login_required
+def owner_category_edit(request, pk):
+
+    category = get_object_or_404(
+        Category,
+        pk=pk,
+        restaurant__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = CategoryForm(
+            request.POST,
+            instance=category,
+        )
+
+        form.fields[
+            "restaurant"
+        ].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Category updated successfully."
+            )
+
+            return redirect(
+                "owner-category-list"
+            )
+
+    else:
+
+        form = CategoryForm(
+            instance=category,
+        )
+
+        form.fields[
+            "restaurant"
+        ].queryset = Restaurant.objects.filter(
+            owner=request.user
+        )
+
+    return render(
+        request,
+        "owner/category_form.html",
+        {
+            "form": form,
+            "title": "Edit Category",
+        },
+    )
+@login_required
+def owner_category_delete(request, pk):
+
+    category = get_object_or_404(
+        Category,
+        pk=pk,
+        restaurant__owner=request.user,
+    )
+
+    if request.method == "POST":
+
+        category.delete()
+
+        messages.success(
+            request,
+            "Category deleted successfully."
+        )
+
+        return redirect(
+            "owner-category-list"
+        )
+
+    return render(
+        request,
+        "owner/category_delete.html",
+        {
+            "category": category,
+        },
+    )
 
 
 class CategoryListCreateView(generics.ListCreateAPIView):
