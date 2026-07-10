@@ -25,6 +25,88 @@ from orders.models import Order
 from django.contrib.auth.decorators import login_required
 from .forms import RestaurantForm
 from django.contrib import messages
+from django.db.models import (
+    Sum,
+    Count,
+    Avg,
+)
+
+@login_required
+def owner_analytics(request):
+
+    if request.user.role != "restaurant_owner":
+
+        return redirect("/")
+
+    restaurants = Restaurant.objects.filter(
+        owner=request.user
+    )
+
+    orders = Order.objects.filter(
+        items__menu_item__restaurant__owner=request.user
+    ).distinct()
+
+    menu_items = MenuItem.objects.filter(
+        restaurant__owner=request.user
+    )
+
+    restaurant_reviews = RestaurantReview.objects.filter(
+        restaurant__owner=request.user
+    )
+
+    revenue = orders.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    average_rating = restaurant_reviews.aggregate(
+        avg=Avg("rating")
+    )["avg"] or 0
+
+    orders_by_status = orders.values(
+        "status"
+    ).annotate(
+        total=Count("id")
+    )
+
+    top_items = (
+        OrderItem.objects.filter(
+            menu_item__restaurant__owner=request.user
+        )
+        .values(
+            "menu_item__name"
+        )
+        .annotate(
+            total=Sum("quantity")
+        )
+        .order_by("-total")[:5]
+    )
+
+    context = {
+
+        "restaurant_count": restaurants.count(),
+
+        "order_count": orders.count(),
+
+        "menu_count": menu_items.count(),
+
+        "revenue": revenue,
+
+        "average_rating": round(
+            average_rating,
+            2,
+        ),
+
+        "orders_by_status": orders_by_status,
+
+        "top_items": top_items,
+
+    }
+
+    return render(
+        request,
+        "owner/analytics.html",
+        context,
+    )
 
 
 

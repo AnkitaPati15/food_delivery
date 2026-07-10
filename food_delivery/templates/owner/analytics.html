@@ -1,0 +1,219 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<h2 class="mb-4">
+
+Analytics Dashboard
+
+</h2>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<div class="card">
+
+<div class="card-body text-center">
+
+<h2>
+
+{{ restaurant_count }}
+
+</h2>
+
+<p>
+
+Restaurants
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card">
+
+<div class="card-body text-center">
+
+<h2>
+
+{{ order_count }}
+
+</h2>
+
+<p>
+
+Orders
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card">
+
+<div class="card-body text-center">
+
+<h2>
+
+₹{{ revenue }}
+
+</h2>
+
+<p>
+
+Revenue
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card">
+
+<div class="card-body text-center">
+
+<h2>
+
+{{ average_rating }}
+
+</h2>
+
+<p>
+
+Average Rating
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<hr>
+
+<h3>
+
+Orders By Status
+
+</h3>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Status</th>
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in orders_by_status %}
+
+<tr>
+
+<td>
+
+{{ item.status }}
+
+</td>
+
+<td>
+
+{{ item.total }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<hr>
+
+<h3>
+
+Top Selling Items
+
+</h3>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Item</th>
+
+<th>Sold</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in top_items %}
+
+<tr>
+
+<td>
+
+{{ item.menu_item__name }}
+
+</td>
+
+<td>
+
+{{ item.total }}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="2">
+
+No Sales Yet
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

@@ -9,7 +9,8 @@ from .views import (
     RestaurantDetailView,
     owner_restaurant_list,
     owner_restaurant_create,
-    owner_restaurant_edit
+    owner_restaurant_edit,
+    owner_analytics
 )
 
 
@@ -63,5 +64,10 @@ path(
     "owner/restaurants/<int:pk>/delete/",
     owner_restaurant_delete,
     name="restaurant-delete",
+),
+path(
+    "owner/analytics/",
+    owner_analytics,
+    name="owner-analytics",
 ),
 ]
