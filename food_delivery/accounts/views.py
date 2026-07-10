@@ -1,59 +1,37 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-
-from .models import User
-from .serializers import (
-    RegisterSerializer,
-    UserProfileSerializer
-)
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.contrib import messages
-from django.shortcuts import redirect
-
-from .forms import ProfileUpdateForm
 from django.contrib.auth import update_session_auth_hash
-from .forms import CustomPasswordChangeForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import redirect, render
+
+from .forms import (
+    ProfileUpdateForm,
+    CustomPasswordChangeForm,
+)
+
+
+class UserLoginView(LoginView):
+
+    template_name = "accounts/login.html"
+
+
+class UserLogoutView(LogoutView):
+
+    next_page = "/"
+
+
 @login_required
-def change_password(request):
-
-    if request.method == "POST":
-
-        form = CustomPasswordChangeForm(
-            request.user,
-            request.POST
-        )
-
-        if form.is_valid():
-
-            user = form.save()
-
-            update_session_auth_hash(
-                request,
-                user
-            )
-
-            messages.success(
-                request,
-                "Password changed successfully."
-            )
-
-            return redirect("profile")
-
-    else:
-
-        form = CustomPasswordChangeForm(
-            request.user
-        )
+def profile(request):
 
     return render(
         request,
-        "accounts/change_password.html",
+        "accounts/profile.html",
         {
-            "form": form
-        }
+            "user": request.user,
+        },
     )
+
+
 @login_required
 def edit_profile(request):
 
@@ -71,7 +49,7 @@ def edit_profile(request):
 
             messages.success(
                 request,
-                "Profile updated successfully."
+                "Profile updated successfully.",
             )
 
             return redirect("profile")
@@ -79,7 +57,7 @@ def edit_profile(request):
     else:
 
         form = ProfileUpdateForm(
-            instance=request.user
+            instance=request.user,
         )
 
     return render(
@@ -90,64 +68,43 @@ def edit_profile(request):
         },
     )
 
+
 @login_required
-def profile(request):
+def change_password(request):
 
-    context = {
+    if request.method == "POST":
 
-        "user": request.user
+        form = CustomPasswordChangeForm(
+            request.user,
+            request.POST,
+        )
 
-    }
+        if form.is_valid():
+
+            user = form.save()
+
+            update_session_auth_hash(
+                request,
+                user,
+            )
+
+            messages.success(
+                request,
+                "Password changed successfully.",
+            )
+
+            return redirect("profile")
+
+    else:
+
+        form = CustomPasswordChangeForm(
+            request.user,
+        )
 
     return render(
-
         request,
-
-        "accounts/profile.html",
-
-        context
-
+        "accounts/change_password.html",
+        {
+            "form": form,
+        },
     )
-
-class RegisterView(generics.CreateAPIView):
-
-    queryset = User.objects.all()
-
-    serializer_class = RegisterSerializer
-
-    permission_classes = [AllowAny]
-
-    def create(self, request, *args, **kwargs):
-
-        serializer = self.get_serializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True)
-
-        validated_data = serializer.validated_data
-
-        user = User.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            role=validated_data['role'],
-            phone_number=validated_data.get('phone_number')
-        )
-
-        user.set_password(validated_data['password'])
-
-        user.save()
-
-        return Response(
-            RegisterSerializer(user).data,
-            status=status.HTTP_201_CREATED
-        )
-
-
-class UserProfileView(generics.RetrieveAPIView):
-
-    serializer_class = UserProfileSerializer
-
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-
-        return self.request.user

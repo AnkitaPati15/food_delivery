@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     home,
+    owner_dashboard,
     restaurant_detail,
     RestaurantListCreateView,
     RestaurantDetailView,
@@ -32,5 +33,10 @@ urlpatterns = [
     "restaurants/<int:pk>/",
     restaurant_detail,
     name="restaurant-detail-page",
+),
+path(
+    "owner/dashboard/",
+    owner_dashboard,
+    name="owner-dashboard",
 ),
 ]

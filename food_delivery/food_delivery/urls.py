@@ -1,19 +1,7 @@
 """
 URL configuration for food_delivery project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 
@@ -30,7 +18,7 @@ schema_view = get_schema_view(
 
     openapi.Info(
         title="Food Delivery API",
-        default_version='v1',
+        default_version="v1",
         description="Food Delivery Backend APIs",
         contact=openapi.Contact(
             email="admin@example.com"
@@ -40,79 +28,145 @@ schema_view = get_schema_view(
     public=True,
 
     permission_classes=[permissions.AllowAny],
+
 )
 
 
 urlpatterns = [
 
+    # ----------------------------
+    # Admin
+    # ----------------------------
+
     path(
-        'admin/',
-        admin.site.urls
+        "admin/",
+        admin.site.urls,
     ),
 
+    # ----------------------------
+    # Frontend Authentication
+    # ----------------------------
+
     path(
-        'api/accounts/',
-        include('accounts.urls')
+        "accounts/",
+        include("accounts.urls"),
     ),
 
-    
+    # ----------------------------
+    # API Authentication
+    # ----------------------------
 
     path(
-        'api/menu/',
-        include('menu.urls')
+        "api/accounts/",
+        include("accounts.urls"),
     ),
 
-    path(
-        'api/cart/',
-        include('cart.urls')
-    ),
+    # ----------------------------
+    # Menu APIs
+    # ----------------------------
 
     path(
-        'api/orders/',
-        include('orders.urls')
+        "api/menu/",
+        include("menu.urls"),
     ),
 
-    path(
-        'api/payments/',
-        include('payments.urls')
-    ),
+    # ----------------------------
+    # Cart APIs
+    # ----------------------------
 
     path(
-        'api/reviews/',
-        include('reviews.urls')
+        "api/cart/",
+        include("cart.urls"),
     ),
 
-    path(
-        'api-auth/',
-        include('rest_framework.urls')
-    ),
+    # ----------------------------
+    # Order APIs
+    # ----------------------------
 
     path(
-        'swagger/',
+        "api/orders/",
+        include("orders.urls"),
+    ),
+
+    # ----------------------------
+    # Payment APIs
+    # ----------------------------
+
+    path(
+        "api/payments/",
+        include("payments.urls"),
+    ),
+
+    # ----------------------------
+    # Review APIs
+    # ----------------------------
+
+    path(
+        "api/reviews/",
+        include("reviews.urls"),
+    ),
+
+    # ----------------------------
+    # Coupon APIs
+    # ----------------------------
+
+    path(
+        "api/coupons/",
+        include("coupons.urls"),
+    ),
+
+    # ----------------------------
+    # Addresses
+    # ----------------------------
+
+    path(
+        "addresses/",
+        include("addresses.urls"),
+    ),
+
+    # ----------------------------
+    # Restaurants & Frontend Pages
+    # ----------------------------
+
+    path(
+        "",
+        include("restaurants.urls"),
+    ),
+
+    # ----------------------------
+    # DRF Login
+    # ----------------------------
+
+    path(
+        "api-auth/",
+        include("rest_framework.urls"),
+    ),
+
+    # ----------------------------
+    # Swagger
+    # ----------------------------
+
+    path(
+        "swagger/",
         schema_view.with_ui(
-            'swagger',
-            cache_timeout=0
+            "swagger",
+            cache_timeout=0,
         ),
-        name='schema-swagger-ui'
+        name="schema-swagger-ui",
     ),
 
     path(
-        'redoc/',
+        "redoc/",
         schema_view.with_ui(
-            'redoc',
-            cache_timeout=0
+            "redoc",
+            cache_timeout=0,
         ),
-        name='schema-redoc'
+        name="schema-redoc",
     ),
-    path("api/coupons/", include("coupons.urls")),
-    path("", include("restaurants.urls")),
-    path(
-    "addresses/",
-    include("addresses.urls"),
-),
 ]
+
 
 urlpatterns += static(
     settings.MEDIA_URL,
-    document_root=settings.MEDIA_ROOT
+    document_root=settings.MEDIA_ROOT,
 )

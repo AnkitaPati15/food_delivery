@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<div class="row">
+
+<div class="col-md-2">
+
+{% include "owner/sidebar.html" %}
+
+</div>
+
+<div class="col-md-10">
+
+{% block owner_content %}
+
+{% endblock %}
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

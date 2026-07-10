@@ -1,0 +1,111 @@
+{% extends "owner/base_owner.html" %}
+
+{% block owner_content %}
+
+<h2 class="mb-4">
+
+Owner Dashboard
+
+</h2>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>
+
+{{ restaurant_count }}
+
+</h1>
+
+<p>
+
+Restaurants
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>
+
+{{ menu_count }}
+
+</h1>
+
+<p>
+
+Menu Items
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>
+
+{{ order_count }}
+
+</h1>
+
+<p>
+
+Orders
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h1>
+
+₹{{ revenue }}
+
+</h1>
+
+<p>
+
+Revenue
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

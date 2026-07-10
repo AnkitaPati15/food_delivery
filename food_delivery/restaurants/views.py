@@ -13,6 +13,50 @@ from .serializers import RestaurantSerializer
 from django.shortcuts import get_object_or_404
 from menu.models import Category
 from menu.models import Category, MenuItem
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from menu.models import MenuItem
+from orders.models import Order
+
+
+@login_required
+def owner_dashboard(request):
+
+    restaurants = Restaurant.objects.filter(
+        owner=request.user
+    )
+
+    menu_items = MenuItem.objects.filter(
+        restaurant__owner=request.user
+    )
+
+    orders = Order.objects.filter(
+        items__menu_item__restaurant__owner=request.user
+    ).distinct()
+
+    revenue = sum(
+        order.total_amount
+        for order in orders
+    )
+
+    context = {
+
+        "restaurant_count": restaurants.count(),
+
+        "menu_count": menu_items.count(),
+
+        "order_count": orders.count(),
+
+        "revenue": revenue,
+
+    }
+
+    return render(
+        request,
+        "owner/dashboard.html",
+        context,
+    )
 
 
 def restaurant_detail(request, pk):
