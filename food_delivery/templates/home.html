@@ -193,11 +193,11 @@ Popular Categories
                         ₹{{ restaurant.delivery_fee }}
 
                     </p>
-                    <a
-    href="#"
-    class="btn btn-outline-danger w-100">
+                <a
+href="{% url 'restaurant-detail' restaurant.id %}"
+class="btn btn-outline-danger w-100">
 
-    View Restaurant
+View Restaurant
 
 </a>
 

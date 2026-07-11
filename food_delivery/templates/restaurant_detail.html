@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{{ restaurant.name }}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+<div class="card shadow">
+
+{% if restaurant.cover_image %}
+
+<img
+src="{{ restaurant.cover_image.url }}"
+class="card-img-top"
+style="height:350px;object-fit:cover;">
+
+{% endif %}
+
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-md-2">
+
+{% if restaurant.logo %}
+
+<img
+src="{{ restaurant.logo.url }}"
+class="img-fluid rounded">
+
+{% endif %}
+
+</div>
+
+<div class="col-md-10">
+
+<h2>
+
+{{ restaurant.name }}
+
+</h2>
+
+<p>
+
+{{ restaurant.description }}
+
+</p>
+
+<p>
+
+📍 {{ restaurant.address }}
+
+</p>
+
+<p>
+
+📞 {{ restaurant.phone_number }}
+
+</p>
+
+<p>
+
+🚚 Delivery Fee :
+₹{{ restaurant.delivery_fee }}
+
+</p>
+
+<p>
+
+⏱ {{ restaurant.delivery_time }} mins
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<hr>
+
+<h3>
+
+Categories
+
+</h3>
+
+<div class="mb-4">
+
+{% for category in categories %}
+
+<span
+class="badge bg-danger">
+
+{{ category.name }}
+
+</span>
+
+{% endfor %}
+
+</div>
+<h3>
+
+Menu
+
+</h3>
+
+<div class="row">
+
+{% for item in menu_items %}
+
+<div class="col-md-4 mb-4">
+
+<div class="card h-100 shadow">
+
+{% if item.image %}
+
+<img
+src="{{ item.image.url }}"
+class="card-img-top"
+style="height:220px;object-fit:cover;">
+
+{% endif %}
+
+<div class="card-body">
+
+<h5>
+
+{{ item.name }}
+
+</h5>
+
+<p>
+
+{{ item.description }}
+
+</p>
+
+<p>
+
+{% if item.discount_price %}
+
+<span class="text-danger">
+
+₹{{ item.discount_price }}
+
+</span>
+
+<del>
+
+₹{{ item.price }}
+
+</del>
+
+{% else %}
+
+₹{{ item.price }}
+
+{% endif %}
+
+</p>
+
+<span
+class="badge bg-success">
+
+{{ item.get_food_type_display }}
+
+</span>
+
+</div>
+
+<div class="card-footer">
+
+<a
+href="#"
+class="btn btn-danger w-100">
+
+Add To Cart
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>
+
+No Menu Items Found
+
+</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

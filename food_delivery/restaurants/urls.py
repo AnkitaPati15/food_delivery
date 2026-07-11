@@ -38,7 +38,7 @@ urlpatterns = [
     path(
     "restaurants/<int:pk>/",
     restaurant_detail,
-    name="restaurant-detail-page",
+    name="restaurant-detail",
 ),
 path(
     "owner/dashboard/",

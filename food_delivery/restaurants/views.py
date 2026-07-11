@@ -4,6 +4,12 @@ from django.shortcuts import (
     get_object_or_404,
 )
 
+
+from menu.models import (
+    Category,
+    MenuItem,
+)
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import filters, generics
@@ -289,11 +295,23 @@ def owner_restaurant_delete(request, pk):
     )
 
 
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+)
+
+from menu.models import (
+    Category,
+    MenuItem,
+)
+
+
 def restaurant_detail(request, pk):
 
     restaurant = get_object_or_404(
         Restaurant,
-        pk=pk
+        pk=pk,
+        is_active=True,
     )
 
     categories = Category.objects.filter(
@@ -302,19 +320,27 @@ def restaurant_detail(request, pk):
 
     menu_items = MenuItem.objects.filter(
         restaurant=restaurant,
-        is_available=True
+        is_available=True,
     )
 
     context = {
+
         "restaurant": restaurant,
+
         "categories": categories,
+
         "menu_items": menu_items,
+
     }
 
     return render(
+
         request,
-        "restaurants/restaurant_detail.html",
+
+        "restaurant_detail.html",
+
         context,
+
     )
 
 
