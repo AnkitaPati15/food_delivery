@@ -58,6 +58,23 @@ href="{% static 'css/profile.css' %}"
     {% include 'includes/navbar.html' %}
 
     <main>
+      <style>
+
+.card{
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 10px 20px rgba(0,0,0,.15);
+
+}
+
+</style>
 
         {% block content %}
         {% if messages %}

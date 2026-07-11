@@ -30,6 +30,10 @@ from django.db.models import (
     Count,
     Avg,
 )
+from django.shortcuts import render
+
+from .models import Restaurant
+from menu.models import MenuItem
 
 @login_required
 def owner_analytics(request):
@@ -313,18 +317,29 @@ def restaurant_detail(request, pk):
         context,
     )
 
+
+
+
 def home(request):
 
-    restaurants = Restaurant.objects.active()[:6]
+    restaurants = Restaurant.objects.filter(
+        is_active=True
+    )[:6]
+
+    featured_menu_items = MenuItem.objects.filter(
+        is_featured=True,
+        is_available=True,
+    )[:8]
 
     context = {
-        "restaurants": restaurants
+        "restaurants": restaurants,
+        "featured_menu_items": featured_menu_items,
     }
 
     return render(
         request,
         "home.html",
-        context
+        context,
     )
 
 

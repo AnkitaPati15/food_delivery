@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-
-{% load static %}
+{% extends "base.html" %}
 
 {% block title %}
 Foodie
@@ -8,268 +6,301 @@ Foodie
 
 {% block content %}
 
-<section class="hero">
+<!-- Hero -->
 
-    <div class="container">
-
-        <div class="row align-items-center">
-
-            <div class="col-lg-6">
-
-                <h1 class="display-3 fw-bold mb-4">
-
-                    Delicious Food
-
-                    <span class="text-warning">
-                        Delivered
-                    </span>
-
-                    To Your Door
-
-                </h1>
-
-                <p class="lead mb-4">
-
-                    Order from your favourite restaurants.
-                    Fresh food.
-                    Fast delivery.
-
-                </p>
-
-                <form class="row g-2">
-
-                    <div class="col-md-9">
-
-                        <input
-                            type="text"
-                            class="form-control form-control-lg"
-                            placeholder="Search restaurants or food..."
-                        >
-
-                    </div>
-
-                    <div class="col-md-3">
-
-                        <button
-                            class="btn btn-warning btn-lg w-100"
-                        >
-                            Search
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-            <div class="col-lg-6 text-center">
-
-                <img
-                    src="{% static 'images/hero.png' %}"
-                    class="img-fluid"
-                    alt="Food Delivery"
-                >
-
-            </div>
-
-        </div>
-
-    </div>
-    
-
-</section>
-<section class="py-5">
+<section class="bg-danger text-white py-5">
 
 <div class="container">
 
-<h2 class="text-center mb-5">
+<h1 class="display-4">
+
+Delicious Food Delivered To Your Door
+
+</h1>
+
+<p>
+
+Order from your favourite restaurants.
+
+</p>
+
+<a
+href="{% url 'restaurant-list' %}"
+class="btn btn-light">
+
+Explore Restaurants
+
+</a>
+
+</div>
+
+</section>
+
+<!-- Categories -->
+
+<div class="container py-5">
+
+<h2 class="mb-4">
 
 Popular Categories
 
 </h2>
+<!-- Featured Restaurants -->
 
-<div class="row g-4">
+<div class="container py-5">
 
-<div class="col-md-2">
+    <h2 class="mb-4">
 
-<div class="category-card">
+        Featured Restaurants
 
-🍕
+    </h2>
+<!-- Featured Menu Items -->
 
-<h5>Pizza</h5>
+<div class="container py-5">
 
-</div>
+    <h2 class="mb-4">
 
-</div>
+        Featured Dishes
 
-<div class="col-md-2">
+    </h2>
 
-<div class="category-card">
+    <div class="row">
 
-🍔
+        {% for item in featured_menu_items %}
 
-<h5>Burger</h5>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
 
-</div>
+            <div class="card h-100 shadow-sm">
 
-</div>
+                {% if item.image %}
 
-<div class="col-md-2">
+                <img
+                    src="{{ item.image.url }}"
+                    class="card-img-top"
+                    style="height:220px; object-fit:cover;"
+                >
 
-<div class="category-card">
+                {% endif %}
 
-🍜
+                <div class="card-body">
 
-<h5>Noodles</h5>
+                    <h5 class="card-title">
 
-</div>
+                        {{ item.name }}
 
-</div>
+                    </h5>
 
-<div class="col-md-2">
+                    <p class="text-muted">
 
-<div class="category-card">
+                        {{ item.restaurant.name }}
 
-🥗
+                    </p>
 
-<h5>Healthy</h5>
+                    <p>
 
-</div>
+                        {% if item.discount_price %}
 
-</div>
+                        <span class="text-danger fw-bold">
 
-<div class="col-md-2">
+                            ₹{{ item.discount_price }}
 
-<div class="category-card">
+                        </span>
 
-🍰
+                        <del class="text-muted">
 
-<h5>Dessert</h5>
+                            ₹{{ item.price }}
 
-</div>
+                        </del>
 
-</div>
+                        {% else %}
 
-<div class="col-md-2">
+                        <span class="fw-bold">
 
-<div class="category-card">
+                            ₹{{ item.price }}
 
-🥤
+                        </span>
 
-<h5>Drinks</h5>
+                        {% endif %}
 
-</div>
+                    </p>
 
-</div>
+                    <span class="badge bg-success">
 
-</div>
+                        {{ item.get_food_type_display }}
 
-</div>
+                    </span>
 
-</section>
-<section class="py-5 bg-light">
+                </div>
 
-    <div class="container">
+                <div class="card-footer bg-white">
 
-        <h2 class="text-center mb-5">
+                    <a
+                        href="#"
+                        class="btn btn-danger w-100">
 
-            Featured Restaurants
+                        Add to Cart
 
-        </h2>
-
-        <div class="row">
-
-            {% for restaurant in restaurants %}
-
-            <div class="col-lg-4 col-md-6 mb-4">
-
-                <div class="restaurant-card">
-
-                    {% if restaurant.cover_image %}
-
-                    <img
-                        src="{{ restaurant.cover_image.url }}"
-                        class="restaurant-image"
-                        alt="{{ restaurant.name }}"
-                    >
-
-                    {% else %}
-
-                    <img
-                        src="https://placehold.co/600x300?text=Restaurant"
-                        class="restaurant-image"
-                        alt="Restaurant"
-                    >
-
-                    {% endif %}
-
-                    <div class="p-3">
-
-                        <h4>
-
-                            {{ restaurant.name }}
-
-                        </h4>
-
-                        <p>
-
-                            {{ restaurant.description|truncatewords:15 }}
-
-                        </p>
-
-                        <div class="d-flex justify-content-between">
-
-                            <span>
-
-                                ⭐ {{ restaurant.average_rating }}
-
-                            </span>
-
-                            <span>
-
-                                🚴 {{ restaurant.delivery_time }} mins
-
-                            </span>
-
-                        </div>
-
-                        <div class="mt-3">
-
-                            <a
-                                href="/restaurants/{{ restaurant.id }}/"
-                                class="btn btn-danger w-100"
-                            >
-
-                                View Restaurant
-
-                            </a>
-
-                        </div>
-
-                    </div>
+                    </a>
 
                 </div>
 
             </div>
 
-            {% empty %}
-
-            <div class="text-center">
-
-                <h4>
-
-                    No Restaurants Available
-
-                </h4>
-
-            </div>
-
-            {% endfor %}
-
         </div>
+
+        {% empty %}
+
+        <p>No featured dishes available.</p>
+
+        {% endfor %}
 
     </div>
 
-</section>
+</div>    
+
+    <div class="row">
+
+        {% for restaurant in restaurants %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                {% if restaurant.logo %}
+                <img
+                    src="{{ restaurant.logo.url }}"
+                    class="card-img-top"
+                    style="height:220px; object-fit:cover;"
+                >
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5>{{ restaurant.name }}</h5>
+
+                    <p>{{ restaurant.address }}</p>
+
+                    <p>
+
+                        Delivery Time:
+                        {{ restaurant.delivery_time }} mins
+
+                    </p>
+
+                    <p>
+
+                        Delivery Fee:
+                        ₹{{ restaurant.delivery_fee }}
+
+                    </p>
+                    <a
+    href="#"
+    class="btn btn-outline-danger w-100">
+
+    View Restaurant
+
+</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>No restaurants available.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<div class="card text-center">
+
+<div class="card-body">
+
+🍕
+
+<h5>
+
+Pizza
+
+</h5>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card text-center">
+
+<div class="card-body">
+
+🍔
+
+<h5>
+
+Burger
+
+</h5>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card text-center">
+
+<div class="card-body">
+
+🥗
+
+<h5>
+
+Healthy
+
+</h5>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card text-center">
+
+<div class="card-body">
+
+🥤
+
+<h5>
+
+Drinks
+
+</h5>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 {% endblock %}
