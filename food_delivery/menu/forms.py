@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Category
+from .models import Category, MenuItem
 
 
 class CategoryForm(forms.ModelForm):
