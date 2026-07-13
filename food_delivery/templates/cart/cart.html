@@ -5,91 +5,56 @@ Cart
 {% endblock %}
 
 {% block content %}
-
 <div class="container py-5">
+    <h2>Your Cart</h2>
 
-<h2>
+    {% if items %}
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.menu_item.name }}</td>
+                        <td>₹{{ item.unit_price }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <form method="post" action="{% url 'decrease-cart-item' item.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-outline-secondary">-</button>
+                                </form>
+                                <span>{{ item.quantity }}</span>
+                                <form method="post" action="{% url 'increase-cart-item' item.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-outline-secondary">+</button>
+                                </form>
+                            </div>
+                        </td>
+                        <td>₹{{ item.subtotal }}</td>
+                        <td>
+                            <form method="post" action="{% url 'remove-cart-item' item.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-Your Cart
-
-</h2>
-
-<table class="table mt-4">
-
-<thead>
-
-<tr>
-
-<th>Food</th>
-
-<th>Price</th>
-
-<th>Quantity</th>
-
-<th>Total</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for item in items %}
-
-<tr>
-
-<td>
-
-{{ item.menu_item.name }}
-
-</td>
-
-<td>
-
-₹{{ item.menu_item.price }}
-
-</td>
-
-<td>
-
-{{ item.quantity }}
-
-</td>
-
-<td>
-
-₹{{ item.quantity|floatformat:0 }}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-<div class="text-end">
-
-<h3>
-
-Grand Total
-
-₹{{ total }}
-
-</h3>
-
-<a
-href="{% url 'checkout' %}"
-class="btn btn-success">
-
-Checkout
-
-</a>
-
+        <div class="text-end">
+            <h3>Grand Total ₹{{ total }}</h3>
+            <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">Your cart is empty.</div>
+    {% endif %}
 </div>
-
-</div>
-
 {% endblock %}

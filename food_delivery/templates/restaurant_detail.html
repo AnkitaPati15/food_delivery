@@ -45,6 +45,22 @@ class="img-fluid rounded">
 
 </h2>
 
+<div class="mb-3">
+
+<span class="badge bg-success">
+
+⭐ {{ average_rating }}
+
+</span>
+
+<span class="text-muted ms-2">
+
+({{ review_count }} Review{{ review_count|pluralize }})
+
+</span>
+
+</div>
+
 <p>
 
 {{ restaurant.description }}
@@ -110,6 +126,61 @@ class="badge bg-danger">
 Menu
 
 </h3>
+
+<form method="GET" class="mb-4">
+
+<div class="input-group">
+
+<input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search menu items..."
+            value="{{ request.GET.search }}">
+
+<button
+            class="btn btn-danger"
+            type="submit">
+
+Search
+
+</button>
+
+<a
+            href="{% url 'restaurant-detail' restaurant.id %}"
+            class="btn btn-secondary">
+
+Clear
+
+</a>
+
+</div>
+
+</form>
+
+<div class="mb-4">
+
+<a
+        href="?{% if request.GET.search %}search={{ request.GET.search }}{% endif %}"
+        class="btn btn-sm {% if not request.GET.category %}btn-danger{% else %}btn-outline-danger{% endif %} mb-2">
+
+All
+
+</a>
+
+{% for category in categories %}
+
+<a
+        href="?category={{ category.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+        class="btn btn-sm {% if request.GET.category == category.id|stringformat:'s' %}btn-danger{% else %}btn-outline-danger{% endif %} mb-2">
+
+{{ category.name }}
+
+</a>
+
+{% endfor %}
+
+</div>
 
 <div class="row">
 
@@ -204,5 +275,61 @@ No Menu Items Found
 </div>
 
 </div>
+
+<hr>
+
+<h3 class="mb-4">
+
+Customer Reviews
+
+</h3>
+
+{% for review in reviews %}
+
+<div class="card mb-3">
+
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+
+<h5>
+
+{{ review.user.username }}
+
+</h5>
+
+<span class="badge bg-warning text-dark">
+
+⭐ {{ review.rating }}/5
+
+</span>
+
+</div>
+
+<p class="mt-2">
+
+{{ review.comment }}
+
+</p>
+
+<small class="text-muted">
+
+{{ review.created_at|date:"d M Y, h:i A" }}
+
+</small>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="alert alert-info">
+
+No reviews yet. Be the first to review this restaurant!
+
+</div>
+
+{% endfor %}
 
 {% endblock %}

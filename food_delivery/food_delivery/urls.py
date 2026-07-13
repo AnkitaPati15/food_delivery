@@ -13,6 +13,9 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from cart.views import add_to_cart, cart_page, decrease_cart_item, increase_cart_item, remove_cart_item
+from orders.views import checkout
+
 
 schema_view = get_schema_view(
 
@@ -79,6 +82,36 @@ urlpatterns = [
         include("cart.urls"),
     ),
 
+    path(
+        "cart/",
+        cart_page,
+        name="cart-page",
+    ),
+
+    path(
+        "cart/add/<int:menu_item_id>/",
+        add_to_cart,
+        name="add-to-cart",
+    ),
+
+    path(
+        "cart/items/<int:pk>/increase/",
+        increase_cart_item,
+        name="increase-cart-item",
+    ),
+
+    path(
+        "cart/items/<int:pk>/decrease/",
+        decrease_cart_item,
+        name="decrease-cart-item",
+    ),
+
+    path(
+        "cart/items/<int:pk>/remove/",
+        remove_cart_item,
+        name="remove-cart-item",
+    ),
+
     # ----------------------------
     # Order APIs
     # ----------------------------
@@ -86,6 +119,12 @@ urlpatterns = [
     path(
         "api/orders/",
         include("orders.urls"),
+    ),
+
+    path(
+        "checkout/",
+        checkout,
+        name="checkout",
     ),
 
     # ----------------------------

@@ -21,6 +21,7 @@ from rest_framework.permissions import (
 from .models import Restaurant
 from .serializers import RestaurantSerializer
 from django.shortcuts import get_object_or_404
+from reviews.models import RestaurantReview
 from menu.models import Category
 from menu.models import Category, MenuItem
 from django.contrib.auth.decorators import login_required
@@ -314,6 +315,22 @@ def restaurant_detail(request, pk):
         is_active=True,
     )
 
+    average_rating = RestaurantReview.objects.filter(
+        restaurant=restaurant
+    ).aggregate(
+        Avg("rating")
+    )["rating__avg"] or 0
+
+    review_count = RestaurantReview.objects.filter(
+        restaurant=restaurant
+    ).count()
+
+    reviews = RestaurantReview.objects.filter(
+        restaurant=restaurant
+    ).select_related(
+        "user"
+    ).order_by("-created_at")
+
     categories = Category.objects.filter(
         restaurant=restaurant
     )
@@ -323,6 +340,20 @@ def restaurant_detail(request, pk):
         is_available=True,
     )
 
+    search = request.GET.get("search")
+
+    if search:
+        menu_items = menu_items.filter(
+            name__icontains=search
+        )
+
+    category = request.GET.get("category")
+
+    if category:
+        menu_items = menu_items.filter(
+            category_id=category
+        )
+
     context = {
 
         "restaurant": restaurant,
@@ -330,6 +361,9 @@ def restaurant_detail(request, pk):
         "categories": categories,
 
         "menu_items": menu_items,
+        "average_rating": round(average_rating, 1),
+        "review_count": review_count,
+        "reviews": reviews,
 
     }
 
